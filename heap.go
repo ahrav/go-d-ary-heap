@@ -43,14 +43,30 @@ type Heap[T constraints.Ordered] struct {
 	lessFunc func(T, T) bool // Function to determine order
 }
 
+// Option is a type representing configurations for the heap
+type Option[T constraints.Ordered] func(*Heap[T])
+
+// WithCapacity is an option that sets the initial capacity of the heap
+func WithCapacity[T constraints.Ordered](capacity int) Option[T] {
+	return func(h *Heap[T]) {
+		h.data = make([]T, capacity)
+	}
+}
+
 // NewHeap creates a new d-ary heap with the specified branching factor.
-func NewHeap[T constraints.Ordered](d int, less func(T, T) bool, capacity ...int) *Heap[T] {
-	return &Heap[T]{
+func NewHeap[T constraints.Ordered](d int, less func(T, T) bool, options ...Option[T]) *Heap[T] {
+	heap := &Heap[T]{
 		d:        d,
 		data:     make([]T, 1), // Start with an initial capacity of 1
 		heapSize: 0,
 		lessFunc: less,
 	}
+
+	for _, option := range options {
+		option(heap)
+	}
+
+	return heap
 }
 
 // parent returns the index of the parent node for a given index.
