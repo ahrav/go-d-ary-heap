@@ -34,7 +34,7 @@ package main
 
 import (
     "fmt"
-    "path/to/heap"
+    "github.com/ahrav/go-d-ary-heap"
 )
 
 func main() {
