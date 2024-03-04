@@ -54,12 +54,12 @@ func WithCapacity[T constraints.Ordered](capacity int) Option[T] {
 }
 
 // NewHeap creates a new d-ary heap with the specified branching factor.
-func NewHeap[T constraints.Ordered](d int, less func(T, T) bool, options ...Option[T]) *Heap[T] {
+func NewHeap[T constraints.Ordered](d int, lessFunc func(T, T) bool, options ...Option[T]) *Heap[T] {
 	heap := &Heap[T]{
 		d:        d,
 		data:     make([]T, 1), // Start with an initial capacity of 1
 		heapSize: 0,
-		lessFunc: less,
+		lessFunc: lessFunc,
 	}
 
 	for _, option := range options {
@@ -77,11 +77,6 @@ func (h *Heap[T]) parent(i int) int {
 // child returns the index of the k-th child of a given index.
 func (h *Heap[T]) child(i, k int) int {
 	return h.d*i + k
-}
-
-// less determines if the element at index i is less than the element at index j.
-func (h *Heap[T]) less(i, j int) bool {
-	return h.data[i] < h.data[j]
 }
 
 // swap swaps the elements at indices i and j.
@@ -106,13 +101,13 @@ func (h *Heap[T]) Push(value T) {
 
 // Pop removes and returns the minimum element from the heap.
 func (h *Heap[T]) Pop() T {
-	var minV T
 	if h.heapSize == 0 {
-		return minV
+		var zero T
+		return zero
 	}
 
-	minV = h.data[0]
-	h.swap(0, h.heapSize-1)
+	minV := h.data[0]
+	h.data[0] = h.data[h.heapSize-1]
 	h.heapSize--
 	h.down(0) // Restore heap property after removal
 	return minV
@@ -120,7 +115,7 @@ func (h *Heap[T]) Pop() T {
 
 // up restores the heap property by bubbling an element up the tree.
 func (h *Heap[T]) up(i int) {
-	for i > 0 && h.less(i, h.parent(i)) {
+	for i > 0 && h.lessFunc(h.data[i], h.data[h.parent(i)]) {
 		h.swap(i, h.parent(i))
 		i = h.parent(i)
 	}
@@ -132,7 +127,7 @@ func (h *Heap[T]) down(i int) {
 		smallest := i // Assume the current node is the smallest
 		for k := 1; k <= h.d && h.child(i, k) < h.heapSize; k++ {
 			childIndex := h.child(i, k)
-			if h.less(childIndex, smallest) {
+			if h.lessFunc(h.data[childIndex], h.data[smallest]) {
 				smallest = childIndex
 			}
 		}
