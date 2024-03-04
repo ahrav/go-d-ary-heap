@@ -55,9 +55,10 @@ func WithCapacity[T constraints.Ordered](capacity int) Option[T] {
 
 // NewHeap creates a new d-ary heap with the specified branching factor.
 func NewHeap[T constraints.Ordered](d int, lessFunc func(T, T) bool, options ...Option[T]) *Heap[T] {
+	const defaultCapacity = 16
 	heap := &Heap[T]{
 		d:        d,
-		data:     make([]T, 1), // Start with an initial capacity of 1
+		data:     make([]T, 0, defaultCapacity),
 		heapSize: 0,
 		lessFunc: lessFunc,
 	}
