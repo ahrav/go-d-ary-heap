@@ -22,7 +22,7 @@
 // - Push: to add new elements to the heap while maintaining the heap property.
 // - Pop: to remove and return the extremal element from the heap.
 // - Peek: to return the extremal element without removing it.
-// - Update: to change an element's value and then restore the heap property.
+// - Update: to change an element's value and then restore the heap property. (TODO)
 //
 // This package is designed for use cases where a priority queue or any other
 // application requires a dynamically ordered set of elements and can benefit
